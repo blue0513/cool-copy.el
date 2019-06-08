@@ -49,15 +49,18 @@
   (copy-region-as-kill beg end)
   (cool-copy--show-message "region copied!"))
 
-(defun cool-copy--show-message (str)
-  (if (eq cool-copy-show 'minibuffer)
-      (message str))
-  (if (eq cool-copy-show 'posframe)
-      (posframe-show cool-copy-posframe-buffer
-                     :string str
-                     :no-properties nil
-                     :background-color cool-copy-posframe-background))
+(defun cool-copy--show-posframe (str)
+  (posframe-show cool-copy-posframe-buffer
+                 :string str
+                 :no-properties nil
+                 :background-color cool-copy-posframe-background)
   (add-hook 'pre-command-hook 'cool-copy--hide-message))
+
+(defun cool-copy--show-message (str)
+  (when (eq cool-copy-show 'minibuffer)
+    (message str))
+   (when (eq cool-copy-show 'posframe)
+     (cool-copy--show-posframe str)))
 
 (defun cool-copy--hide-message ()
   (remove-hook 'pre-command-hook 'cool-copy--hide-message)
